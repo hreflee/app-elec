@@ -11,8 +11,12 @@
   },
   "dependencies": {
     "element-ui": "^2.3.7",
+    "highcharts": "^6.1.0",
+    "moment": "^2.22.1",
+    "moment-range": "^4.0.1",
     "vue": "^2.5.2",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "whatwg-fetch": "^2.0.4"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

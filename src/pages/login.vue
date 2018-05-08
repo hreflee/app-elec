@@ -18,7 +18,7 @@
           </el-input>
         </el-form-item>
         <el-form-item>
-          <el-button class="submit-btn" type="primary">登录</el-button>
+          <el-button class="submit-btn" type="success" @click="submit">登录</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -26,6 +26,8 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import fetch from '../util/fetch'
+  import bus from '../store/bus'
   export default {
     name: 'login',
     data () {
@@ -34,6 +36,24 @@
           username: '',
           password: ''
         }
+      }
+    },
+    methods: {
+      submit () {
+        fetch('/api/user/login', {
+          method: 'POST',
+          body: {
+            username: this.loginFormData.username,
+            password: this.loginFormData.password
+          }
+        }).then(res => {
+          if (res.status === 1) {
+            bus.user.username = this.loginFormData.username;
+            this.$router.push('/basic');
+          } else {
+            this.$message.error(res.data);
+          }
+        });
       }
     }
   }

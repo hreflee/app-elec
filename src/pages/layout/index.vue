@@ -1,79 +1,74 @@
 <template>
   <el-container class="container">
-    <el-scrollbar class="left-side">
-      <el-aside>
-        <el-menu class="menu"
-                 :default-openeds="['1', '2', '3', '1-4', '3-4']"
-                 background-color="#1d2438"
-                 text-color="#fff"
-                 active-text-color="#ffd04b">
-            <el-submenu index="1">
-              <template slot="title"><i class="el-icon-message"></i>导航一</template>
-              <el-menu-item-group>
-                <template slot="title">分组一</template>
-                <el-menu-item index="1-1">选项1</el-menu-item>
-                <el-menu-item index="1-2">选项2</el-menu-item>
-              </el-menu-item-group>
-              <el-menu-item-group title="分组2">
-                <el-menu-item index="1-3">选项3</el-menu-item>
-              </el-menu-item-group>
-              <el-submenu index="1-4">
-                <template slot="title">选项4</template>
-                <el-menu-item index="1-4-1">选项4-1</el-menu-item>
-              </el-submenu>
-            </el-submenu>
-            <el-submenu index="2">
-              <template slot="title"><i class="el-icon-menu"></i>导航二</template>
-              <el-menu-item-group>
-                <template slot="title">分组一</template>
-                <el-menu-item index="2-1">选项1</el-menu-item>
-                <el-menu-item index="2-2">选项2</el-menu-item>
-              </el-menu-item-group>
-              <el-menu-item-group title="分组2">
-                <el-menu-item index="2-3">选项3</el-menu-item>
-              </el-menu-item-group>
-              <el-submenu index="2-4">
-                <template slot="title">选项4</template>
-                <el-menu-item index="2-4-1">选项4-1</el-menu-item>
-              </el-submenu>
-            </el-submenu>
-            <el-submenu index="3">
-              <template slot="title"><i class="el-icon-setting"></i>导航三</template>
-              <el-menu-item-group>
-                <template slot="title">分组一</template>
-                <el-menu-item index="3-1">选项1</el-menu-item>
-                <el-menu-item index="3-2">选项2</el-menu-item>
-              </el-menu-item-group>
-              <el-menu-item-group title="分组2">
-                <el-menu-item index="3-3">选项3</el-menu-item>
-              </el-menu-item-group>
-              <el-submenu index="3-4">
-                <template slot="title">选项4</template>
-                <el-menu-item index="3-4-1">选项4-1</el-menu-item>
-              </el-submenu>
-            </el-submenu>
-          </el-menu>
-      </el-aside>
-    </el-scrollbar>
+    <el-aside width="180px" class="left-side">
+      <el-menu class="menu"
+               :default-active="$route.path"
+               :default-openeds="allPath"
+               :router="true"
+               background-color="#1d2438"
+               text-color="#fff"
+               active-text-color="#ffd04b">
+        <template v-for="routeItem in routes">
+          <el-menu-item v-if="!routeItem.meta.hasChildren" :index="routeItem.path">
+            <template slot="title">{{routeItem.meta.title}}</template>
+          </el-menu-item>
+          <el-submenu v-if="routeItem.meta.hasChildren" :index="routeItem.path">
+            <template slot="title">{{routeItem.meta.title}}</template>
+            <el-menu-item v-for="subRouteItem in routeItem.children" :index="subRouteItem.path">
+              <template slot="title">{{subRouteItem.meta.title}}</template>
+            </el-menu-item>
+          </el-submenu>
+        </template>
+      </el-menu>
+    </el-aside>
 
     <el-container class="right-side">
       <el-header class="header">
-        <h1>标题</h1>
+        <h1>{{$route.meta.title}}</h1>
+        <el-dropdown @command="logout">
+          <span class="el-dropdown-link">
+            {{username}}<i class="el-icon-arrow-down el-icon--right"></i>
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>登出</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
       </el-header>
 
       <el-main class="content">
-        <router-view/>
+        <router-view />
       </el-main>
     </el-container>
   </el-container>
 </template>
 
 <script type="text/ecmascript-6">
+  import bus from '../../store/bus'
   export default {
     name: 'layout',
     data () {
       return {
 
+      }
+    },
+    computed: {
+      routes () {
+        return this.$router.options.routes.filter(item => {
+          return ['/', '/login'].indexOf(item.path) <= -1;
+        });
+      },
+      allPath () {
+        return this.$router.options.routes.map(item => item.path);
+      },
+      username () {
+        return bus.user.username;
+      }
+    },
+    methods: {
+      logout () {
+        fetch('/api/user/logout').then(res => {
+          this.$router.push('/login')
+        });
       }
     }
   }
@@ -84,11 +79,9 @@
     height: 100vh;
   }
   .left-side {
-    & /deep/ div {
-      overflow-x: hidden;
-    }
     .menu {
       min-height: 100vh;
+      overflow-x: hidden;
     }
   }
   .right-side {
@@ -96,11 +89,22 @@
     .header {
       display: flex;
       align-items: center;
+      justify-content: space-between;
       margin-bottom: 10px;
       background: white;
     }
     .content {
+      display: flex;
+      flex-direction: column;
       background: white;
+      /deep/ > div {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        & > .el-container {
+          flex: 1 1 auto;
+        }
+      }
     }
   }
 </style>

@@ -1,11 +1,24 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import fetch from '../util/fetch'
 import login from '../pages/login.vue'
 import layout from '../pages/layout'
 
+import basic from '../pages/basic.vue'
+
+import dailyUsage from '../pages/load/daily-usage.vue'
+import maxRequriement from '../pages/load/max-requirement.vue'
+
+import query from '../pages/power-cut/query.vue'
+
+import hello from '../components/HelloWorld.vue'
+
+import bus from '../store/bus'
+
+const publicPathes = ['/', '/login'];
+
 Vue.use(Router);
-console.log(login);
-export default new Router({
+let router = new Router({
   routes: [
     {
       path: '/',
@@ -13,17 +26,82 @@ export default new Router({
     },
     {
       path: '/login',
-      name: 'login',
       component: login
     },
     {
-      path: '/app',
+      path: '/basic',
       component: layout,
+      meta: {title: '基础数据', hasChildren: false},
       children: [
         {
-          path: 'basic'
+          path: '',
+          component: basic,
+          meta: {title: '基础数据'}
+        }
+      ]
+    },
+    {
+      path: '/load',
+      component: layout,
+      meta: {title: '负荷数据', hasChildren: true},
+      children: [
+        {
+          path: '/load/maxRequirement',
+          component: maxRequriement,
+          meta: {title: '需求峰值'}
+        },
+        {
+          path: '/load/dailyUsage',
+          component: dailyUsage,
+          meta: {title: '日用电量'}
+        }
+      ]
+    },
+    {
+      path: '/powerCut',
+      component: layout,
+      meta: {title: '停电数据', hasChildren: true},
+      redirect: '/powerCut/query',
+      children: [
+        {
+          path: '/powerCut/query',
+          component: query,
+          meta: {title: '停电查询'}
+        },
+        {
+          path: '/powerCut/distribute',
+          meta: {title: '停电分布'}
+        }
+      ]
+    },
+    {
+      path: '/predict',
+      component: layout,
+      meta: {title: '用电预测', hasChildren: false},
+      children: [
+        {
+          path: '',
+          component: hello,
+          meta: {title: '用电预测'}
         }
       ]
     }
   ]
-})
+});
+
+router.beforeEach((to, from, next) => {
+  if (publicPathes.indexOf(to.path) <= -1) {
+    fetch('/api/user/checkLogin').then(res => {
+      if (res.status === 1) {
+        bus.user.username = res.data.username;
+        next();
+      } else {
+        next('/login');
+      }
+    })
+  } else {
+    next();
+  }
+});
+
+export default router;
