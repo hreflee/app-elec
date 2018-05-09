@@ -88,7 +88,7 @@
       },
       dateLimit () {
         return (date) => {
-          return !Moment(date).isBetween(...bus.dateRange);
+          return !Moment(date).isBetween(...bus.dateRange, null, '[]');
         }
       }
     },
