@@ -1,33 +1,6 @@
 <template>
   <div class="page-wrapper">
-    <el-form class="params-form" inline :model="queryParam">
-      <el-form-item label="时段">
-        <el-date-picker
-          class="time-range-picker"
-          v-model="queryParam.dateRange"
-          type="daterange"
-          :clearable="false"
-          :picker-options="{disabledDate: dateLimit}"
-          range-separator="~"
-          start-placeholder="开始时间"
-          end-placeholder="结束时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="台区">
-        <el-select class="station-select" multiple v-model="queryParam.collectPointNos">
-          <el-option v-for="item in stations" :label="item.key" :value="item.value"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="聚合">
-        <el-checkbox-group v-model="queryParam.groupOptions" class="group-checkbox">
-          <el-checkbox label="按年" :disabled="queryParam.groupOptions.includes('按天')"></el-checkbox>
-          <el-checkbox label="按月" :disabled="queryParam.groupOptions.includes('按天')"></el-checkbox>
-          <el-checkbox label="按天" @change="toggleDate"></el-checkbox>
-          <el-checkbox label="按时段"></el-checkbox>
-          <el-checkbox label="按台区"></el-checkbox>
-        </el-checkbox-group>
-      </el-form-item>
-    </el-form>
+    <power-cut-form v-model="queryParam"></power-cut-form>
     <el-table :data="queryResult" class="table" v-if="showTable" :show-overflow-tooltip="true">
       <el-table-column
         v-if="tableCol.time" prop="time"
@@ -73,7 +46,9 @@
   import bus from '../../store/bus';
   import fetch from '../../util/fetch';
   import replaceArray from '../../util/replace-array';
+  import PowerCutForm from "./components/power-cut-form";
   export default {
+    components: {PowerCutForm},
     name: 'query',
     data () {
       return {
@@ -100,24 +75,9 @@
     computed: {
       dateRange () {
         return bus.dateRange;
-      },
-      stations () {
-        return bus.stations
-      },
-      dateLimit () {
-        return (date) => {
-          return !Moment(date).isBetween(...bus.dateRange, null, '[]');
-        }
       }
     },
     watch: {
-      dateRange: {
-        deep: true,
-        immediate: true,
-        handler () {
-          this.queryParam.dateRange = this.dateRange;
-        }
-      },
       queryParam: {
         deep: true,
         handler () {
@@ -155,12 +115,6 @@
       });
     },
     methods: {
-      toggleDate (val) {
-        if (val) {
-          !this.queryParam.groupOptions.includes('按年') && this.queryParam.groupOptions.push('按年');
-          !this.queryParam.groupOptions.includes('按月') && this.queryParam.groupOptions.push('按月');
-        }
-      },
       timeColFormatter (row, column, cellValue, index) {
         return cellValue + (cellValue && cellValue.length <= 2 ? '月':'');
       },
@@ -225,14 +179,6 @@
   .page-wrapper {
     align-items: center;
     overflow: scroll;
-    .params-form {
-      .time-range-picker {
-        width: 300px;
-      }
-      .station-select {
-        width: 400px;
-      }
-    }
     .table {
       flex: 0 0 auto;
       max-width: 1200px;

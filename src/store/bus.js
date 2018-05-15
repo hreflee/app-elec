@@ -8,7 +8,8 @@ export default new Vue({
       username: ''
     },
     stations: [],
-    dateRange: []
+    dateRange: [],
+    loading: false
   },
   watch: {
     'user.username': {
@@ -17,8 +18,8 @@ export default new Vue({
         if (newVal) {
           fetch('./api/brief').then(res => {
             if (res.status === 1) {
-              replaceArray(this.stations, res.data.stations);
-              replaceArray(this.dateRange, res.data.dateRange);
+              this.$set(this, 'stations', res.data.stations);
+              this.$set(this, 'dateRange', res.data.dateRange);
             }
           })
         }

@@ -1,20 +1,22 @@
 <template>
   <div>
-
+    <predict-item></predict-item>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import PredictItem from "./components/predict-item";
   export default {
-    name: '$Name$',
+    components: {PredictItem},
+    name: 'predict',
     data () {
       return {
-        $END$
+
       }
     }
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 
 </style>

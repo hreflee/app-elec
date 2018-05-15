@@ -24,7 +24,7 @@
 
     <el-container class="right-side">
       <el-header class="header">
-        <h1>{{$route.meta.title}}</h1>
+        <h1>{{$route.meta.title}} <span class="el-icon-loading" v-show="loading"></span></h1>
         <el-dropdown @command="logout">
           <span class="el-dropdown-link">
             {{username}}<i class="el-icon-arrow-down el-icon--right"></i>
@@ -62,6 +62,9 @@
       },
       username () {
         return bus.user.username;
+      },
+      loading () {
+        return bus.loading
       }
     },
     methods: {

@@ -10,6 +10,9 @@
   }
 </script>
 
-<style>
+<style lang="scss">
+  @import './style/element-variables.scss';
+  @import './assets/icon/iconfont.css';
+  @import './style/reset.css';
 
 </style>

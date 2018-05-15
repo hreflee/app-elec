@@ -10,8 +10,9 @@ import dailyUsage from '../pages/load/daily-usage.vue'
 import maxRequriement from '../pages/load/max-requirement.vue'
 
 import query from '../pages/power-cut/query.vue'
+import distribute from '../pages/power-cut/distribute.vue'
 
-import hello from '../components/HelloWorld.vue'
+import predict from '../pages/predict'
 
 import bus from '../store/bus'
 
@@ -70,6 +71,7 @@ let router = new Router({
         },
         {
           path: '/powerCut/distribute',
+          component: distribute,
           meta: {title: '停电分布'}
         }
       ]
@@ -77,12 +79,12 @@ let router = new Router({
     {
       path: '/predict',
       component: layout,
-      meta: {title: '用电预测', hasChildren: false},
+      meta: {title: '用电预测/停电验证', hasChildren: false},
       children: [
         {
           path: '',
-          component: hello,
-          meta: {title: '用电预测'}
+          component: predict,
+          meta: {title: '用电预测/停电验证'}
         }
       ]
     }
