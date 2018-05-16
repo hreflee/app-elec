@@ -1,5 +1,5 @@
 import 'whatwg-fetch'
-import queryString from 'query-string'
+import QueryString from 'query-string'
 import bus from '../store/bus'
 
 let betterFetch = function (url, option) {
@@ -13,9 +13,10 @@ let betterFetch = function (url, option) {
   if (option.method === undefined || option.method === 'GET' && option.body) {
     let allParams = option.body;
     if (url.indexOf('?') >= 0) {
-      allParams = Object.assign(queryString.parse(url.split('?')[1]), allParams);
+      allParams = Object.assign(QueryString.parse(url.split('?')[1]), allParams);
     }
-    url += '?' + queryString.stringify(allParams);
+    let queryString = QueryString.stringify(allParams)
+    url += (queryString.length ? '?':'') + queryString;
   }
   option.credentials = 'include';
   bus.loading = true;

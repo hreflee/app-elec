@@ -44,6 +44,7 @@
 
 <script type="text/ecmascript-6">
   import bus from '../../store/bus'
+  import fetch from '../../util/fetch'
   export default {
     name: 'layout',
     data () {
@@ -70,7 +71,7 @@
     methods: {
       logout () {
         fetch('/api/user/logout').then(res => {
-          this.$router.push('/login')
+          this.$router.replace('/login')
         });
       }
     }
