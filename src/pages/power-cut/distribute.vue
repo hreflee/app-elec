@@ -204,7 +204,7 @@
           let clientPropCate = Object.keys(this.clientProp);
           emptyX = Array(clientPropCate.length).fill(0);
           fillHandler = (seriesData, resultItem) => {
-            seriesData[clientPropCate.indexOf(resultItem.collectPointNo)] = resultItem.totalTime;
+            seriesData[clientPropCate.indexOf(resultItem.collectPointNo)] = resultItem[yAxisLabelMap[yAxisDataType][0]];
           };
           this.chart.xAxis[0].update({
             categories: clientPropCate.map(item => this.clientProp[item].name)
